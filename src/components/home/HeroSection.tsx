@@ -1,35 +1,69 @@
-
+import { Globe } from "@/components/ui/globe";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 
 export function HeroSection() {
   return (
-    <div className="relative overflow-hidden">
-      {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-r from-pharma-blue-dark to-pharma-blue opacity-90 z-10"></div>
+    <section className="relative bg-gradient-to-br from-[#EDF6FF] to-white py-2 sm:py-2 px-4 sm:px-12 overflow-hidden">
+      {/* Decorative background elements */}
+      <div className="absolute inset-0 bg-grid-white/5 bg-[length:30px_30px] opacity-20 z-0" />
       
-      {/* Background pattern for visual interest */}
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48cGF0aCBkPSJNMzYgMzRjMC0yLjIgMS44LTQgNC00czQgMS44IDQgNC0xLjggNC00IDQtNC0xLjgtNC00eiIvPjxwYXRoIGQ9Ik0xNiAxNmMwLTIuMiAxLjgtNCA0LTRzNCAxLjggNCA0LTEuOCA0LTQgNC00LTEuOC00LTR6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-30 z-0"></div>
-
-      {/* Content container */}
-      <div className="relative container-custom py-20 md:py-28 flex flex-col items-center text-center z-20">
-        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight max-w-4xl mx-auto animate-fade-in">
-          Revolutionize Your Pharmacy Inventory Management
-        </h1>
-        <p className="mt-6 text-xl text-white/90 max-w-2xl mx-auto animate-fade-in">
-          Smart, predictive, and fully compliant — built for modern pharmaceutical operations
-        </p>
-        
-        <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center animate-fade-in">
-          <Button size="lg" className="bg-white text-pharma-blue hover:bg-white/90">
-            Request a Demo
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
-          <Button size="lg" variant="outline" className="border-white text-pharma-blue hover:bg-white/10">
-            Explore Features
-          </Button>
+      {/* Mobile Globe background (positioned behind content) */}
+      <div className="absolute inset-0 md:hidden pointer-events-none z-0">
+        <div className="w-full h-full min-h-[600px]">
+          <Globe className="w-full h-full opacity-40 saturate-150 drop-shadow-[0_0_60px_rgba(37,99,235,0.3)]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#EDF6FF]/70 via-white/80 to-white/90" />
         </div>
       </div>
-    </div>
+      
+      {/* Two-column layout container */}
+      <div className="relative z-10 max-w-7xl mx-auto grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+        {/* Left column: Content */}
+        <div className="flex flex-col items-center md:items-start text-center md:text-left">
+          <span className="text-blue-600 font-medium tracking-wide mb-4 backdrop-blur-sm px-4 py-1 rounded-full bg-white/60 shadow-sm">
+            Smart Pharmacy Management System
+          </span>
+
+          {/* Heading */}
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 max-w-3xl leading-tight">
+            Revolutionize Your Pharmacy Inventory Management
+          </h1>
+
+          {/* Description */}
+          <p className="mt-4 text-base sm:text-lg text-slate-600 max-w-2xl">
+            Smart, predictive, and fully compliant — built for modern pharmaceutical operations.
+          </p>
+
+          {/* CTA Buttons */}
+          <div className="mt-8 flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+            <Button
+              size="lg"
+              className="bg-blue-600 text-white hover:bg-blue-700 font-medium rounded-full px-8 shadow-md transition-all hover:scale-105 w-full sm:w-auto"
+            >
+              Request a Demo
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+
+            <Button
+              size="lg"
+              variant="outline"
+              className="border-blue-600 text-blue-600 hover:bg-blue-50 rounded-full px-8 transition-all hover:border-blue-700 hover:scale-105 w-full sm:w-auto"
+            >
+              Explore Features
+            </Button>
+          </div>
+        </div>
+        
+        {/* Right column: Globe visualization - Desktop only */}
+        <div className="relative h-[500px] sm:h-[600px] flex items-center justify-center w-full hidden md:flex">
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-[120%] h-[120%] relative">
+              <Globe className="w-full h-full opacity-80 saturate-150 drop-shadow-[0_0_60px_rgba(37,99,235,0.3)] transition-all duration-500" />
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_50%,white_100%)] opacity-30" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
