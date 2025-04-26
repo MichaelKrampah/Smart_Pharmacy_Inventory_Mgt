@@ -1,5 +1,4 @@
 import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -11,6 +10,14 @@ import BenefitsPage from "./pages/BenefitsPage";
 import CaseStudiesPage from "./pages/CaseStudiesPage";
 import TestimonialsPage from "./pages/TestimonialsPage";
 import NotFound from "./pages/NotFound";
+import { AuthProvider } from "./auth/AuthContext";
+import InventoryIndex from "./pages/inventory";
+import { ProtectedRoute } from "./auth/ProtectedRoute";
+import Dashboard from "./pages/dashboard";
+import Orders from "./pages/orders";
+import Reports from "./pages/reports";
+import UnauthorizedPage from "./pages/UnauthorizedPage";
+import { Create as CreateInventoryItem, Edit as EditInventoryItem } from "./pages/inventory/create";
 
 const queryClient = new QueryClient();
 
@@ -19,17 +26,34 @@ const App = () => (
     <HelmetProvider>
       <TooltipProvider>
         <Toaster />
-        <Sonner />
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/system-overview" element={<SystemOverviewPage />} />
-            <Route path="/features" element={<FeaturesPage />} />
-            <Route path="/benefits" element={<BenefitsPage />} />
-            <Route path="/case-studies" element={<CaseStudiesPage />} />
-            <Route path="/testimonials" element={<TestimonialsPage />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <AuthProvider>
+            <Routes>
+              {/* Public routes */}
+              <Route path="/" element={<HomePage />} />
+              <Route path="/system-overview" element={<SystemOverviewPage />} />
+              <Route path="/features" element={<FeaturesPage />} />
+              <Route path="/benefits" element={<BenefitsPage />} />
+              <Route path="/case-studies" element={<CaseStudiesPage />} />
+              <Route path="/testimonials" element={<TestimonialsPage />} />
+              <Route path="/unauthorized" element={<UnauthorizedPage />} />
+
+              <Route element={<ProtectedRoute />}>
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/inventory" element={<InventoryIndex />} />
+                <Route path="/orders" element={<Orders />} />
+                <Route path="/reports" element={<Reports />} />
+              </Route>
+
+              {/* Protected routes for Admin and Manager only */}
+              <Route element={<ProtectedRoute allowedRoles={['Admin', 'Manager']} />}>
+                <Route path="/inventory/create" element={<CreateInventoryItem />} />
+                <Route path="/inventory/:id/edit" element={<EditInventoryItem />} />
+              </Route>
+
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </AuthProvider>
         </BrowserRouter>
       </TooltipProvider>
     </HelmetProvider>

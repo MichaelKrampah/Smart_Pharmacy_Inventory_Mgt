@@ -1,75 +1,56 @@
+import { ReactNode } from 'react';
+import { Card, CardContent } from './card';
+import { TrendingUp, TrendingDown } from 'lucide-react';
 
-import { LucideIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { 
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { InfoIcon } from "lucide-react";
-
-interface DashboardStatProps {
+export interface DashboardStatProps {
   title: string;
-  value: string | number;
-  icon: LucideIcon;
+  value: string;
+  description: string;
+  icon?: ReactNode;
+  trend?: {
+    direction: 'up' | 'down';
+    value: string;
+    text: string;
+  };
   change?: {
-    value: string | number;
+    value: string;
     positive: boolean;
   };
-  tooltipText?: string;
   colorClass?: string;
-  className?: string;
+  tooltipText?: string;
 }
 
-export function DashboardStat({
-  title,
-  value,
-  icon: Icon,
-  change,
-  tooltipText,
-  colorClass = "bg-pharma-blue-light text-pharma-blue",
-  className,
-}: DashboardStatProps) {
+export function DashboardStat({ title, value, description, icon, trend, colorClass, tooltipText }: DashboardStatProps) {
   return (
-    <div className={cn("p-4 bg-white border border-border rounded-lg shadow-sm", className)}>
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <div className={cn("p-2 rounded-md", colorClass)}>
-            <Icon className="h-5 w-5" />
-          </div>
-          <div className="flex items-center">
-            <h3 className="font-medium text-sm text-gray-500">{title}</h3>
-            {tooltipText && (
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <button className="ml-1">
-                      <InfoIcon className="h-3.5 w-3.5 text-muted-foreground" />
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p className="text-xs max-w-[200px]">{tooltipText}</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+    <Card>
+      <CardContent className="p-6">
+        <div className="flex justify-between">
+          <div>
+            <p className="text-sm font-medium text-muted-foreground flex items-center gap-1">
+              {icon && (
+                <span className={`inline-flex items-center justify-center h-8 w-8 rounded-lg mr-2 ${colorClass || 'bg-muted text-muted-foreground'}`}>{icon}</span>
+              )}
+              {title}
+              {tooltipText && <span className="ml-1" title={tooltipText}>ⓘ</span>}
+            </p>
+            <div className="flex items-baseline gap-2 mt-1">
+              <h2 className="text-3xl font-bold">{value}</h2>
+              {/* <p className="text-sm text-muted-foreground">{description}</p> */}
+            </div>
+            {trend && (
+              <p className={`text-xs mt-2 flex items-center ${trend.direction === 'up' ? 'text-green-600' : 'text-red-600'}`}>
+                {trend.direction === 'up' ? (
+                  <TrendingUp className="h-3 w-3 mr-1" />
+                ) : (
+                  <TrendingDown className="h-3 w-3 mr-1" />
+                )}
+                <span>{trend.value}</span>
+                {/* <span className="text-muted-foreground ml-1">{trend.text}</span> */}
+              </p>
             )}
           </div>
         </div>
-      </div>
-      <div className="mt-2 flex items-baseline">
-        <p className="text-2xl font-semibold">{value}</p>
-        {change && (
-          <span 
-            className={cn(
-              "ml-2 text-xs font-medium",
-              change.positive ? "text-green-600" : "text-red-600"
-            )}
-          >
-            {change.positive ? "+" : "-"}{change.value}
-          </span>
-        )}
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }

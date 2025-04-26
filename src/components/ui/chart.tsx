@@ -353,6 +353,189 @@ function getPayloadConfigFromPayload(
     : config[key as keyof typeof config]
 }
 
+// Define proper interfaces for chart components
+interface ChartDataItem {
+  name?: string;
+  [key: string]: unknown;
+}
+
+interface BaseChartProps {
+  data: ChartDataItem[];
+  height?: number;
+  colors?: string[];
+  valueFormatter?: (value: number) => string;
+}
+
+interface LineChartProps extends BaseChartProps {
+  xAxisKey: string;
+  yAxisKey: string;
+  categories: string[];
+}
+
+interface BarChartProps extends BaseChartProps {
+  xAxisKey: string;
+  yAxisKey: string;
+  categories: string[];
+}
+
+interface PieChartProps extends BaseChartProps {
+  nameKey: string;
+  dataKey: string;
+  legend?: boolean;
+}
+
+// Export properly implemented chart components
+export const LineChart: React.FC<LineChartProps> = ({
+  data,
+  xAxisKey,
+  yAxisKey,
+  categories,
+  colors = ["#2563eb"],
+  valueFormatter = (value) => value.toString(),
+}) => {
+  const defaultConfig: ChartConfig = {};
+  
+  categories.forEach((category, index) => {
+    defaultConfig[category] = { 
+      color: colors[index % colors.length],
+      label: category
+    };
+  });
+
+  return (
+    <ChartContainer config={defaultConfig}>
+      <RechartsPrimitive.LineChart data={data}>
+        <RechartsPrimitive.CartesianGrid strokeDasharray="3 3" />
+        <RechartsPrimitive.XAxis 
+          dataKey={xAxisKey} 
+          tickLine={false}
+        />
+        <RechartsPrimitive.YAxis 
+          tickLine={false}
+          tickFormatter={valueFormatter}
+        />
+        <ChartTooltip 
+          content={<ChartTooltipContent />} 
+          formatter={valueFormatter} 
+        />
+        <ChartLegend content={<ChartLegendContent />} />
+        {categories.map((category, index) => (
+          <RechartsPrimitive.Line
+            key={category}
+            type="monotone"
+            dataKey={yAxisKey}
+            stroke={colors[index % colors.length]}
+            activeDot={{ r: 8 }}
+          />
+        ))}
+      </RechartsPrimitive.LineChart>
+    </ChartContainer>
+  );
+};
+
+export const BarChart: React.FC<BarChartProps> = ({
+  data,
+  xAxisKey,
+  yAxisKey,
+  categories,
+  colors = ["#2563eb"],
+  valueFormatter = (value) => value.toString(),
+}) => {
+  const defaultConfig: ChartConfig = {};
+  
+  categories.forEach((category, index) => {
+    defaultConfig[category] = { 
+      color: colors[index % colors.length],
+      label: category
+    };
+  });
+
+  return (
+    <ChartContainer config={defaultConfig}>
+      <RechartsPrimitive.BarChart data={data}>
+        <RechartsPrimitive.CartesianGrid strokeDasharray="3 3" />
+        <RechartsPrimitive.XAxis 
+          dataKey={xAxisKey} 
+          tickLine={false}
+        />
+        <RechartsPrimitive.YAxis 
+          tickLine={false}
+          tickFormatter={valueFormatter}
+        />
+        <ChartTooltip 
+          content={<ChartTooltipContent />} 
+          formatter={valueFormatter} 
+        />
+        <ChartLegend content={<ChartLegendContent />} />
+        {categories.map((category, index) => (
+          <RechartsPrimitive.Bar
+            key={category}
+            dataKey={yAxisKey}
+            fill={colors[index % colors.length]}
+          />
+        ))}
+      </RechartsPrimitive.BarChart>
+    </ChartContainer>
+  );
+};
+
+export const PieChart: React.FC<PieChartProps> = ({
+  data,
+  nameKey,
+  dataKey,
+  colors = [
+    "#2563eb", "#3b82f6", "#60a5fa", "#93c5fd", 
+    "#bfdbfe", "#dbeafe", "#eff6ff", "#f8fafc"
+  ],
+  valueFormatter = (value) => value.toString(),
+  legend = true
+}) => {
+  const defaultConfig: ChartConfig = {};
+  
+  data.forEach((item, index) => {
+    const name = item[nameKey];
+    if (typeof name === 'string') {
+      defaultConfig[name] = { 
+        color: colors[index % colors.length],
+        label: name
+      };
+    }
+  });
+
+  return (
+    <ChartContainer config={defaultConfig}>
+      <RechartsPrimitive.PieChart>
+        <ChartTooltip 
+          content={<ChartTooltipContent />} 
+          formatter={valueFormatter}
+        />
+        {legend && <ChartLegend content={<ChartLegendContent />} />}
+        <RechartsPrimitive.Pie
+          data={data}
+          nameKey={nameKey}
+          dataKey={dataKey}
+          cx="50%"
+          cy="50%"
+          outerRadius={120}
+          label={(entry) => entry[nameKey as keyof typeof entry] as string}
+        >
+          {data.map((_, index) => (
+            <RechartsPrimitive.Cell 
+              key={`cell-${index}`} 
+              fill={colors[index % colors.length]} 
+            />
+          ))}
+        </RechartsPrimitive.Pie>
+      </RechartsPrimitive.PieChart>
+    </ChartContainer>
+  );
+};
+
+// Properly type CustomBarChart
+export const CustomBarChart: React.FC<BarChartProps> = (props) => {
+  return <BarChart {...props} />;
+};
+
 export {
   ChartContainer,
   ChartTooltip,

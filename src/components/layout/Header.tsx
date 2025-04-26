@@ -1,13 +1,33 @@
-
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Menu, X, ChevronDown } from 'lucide-react';
+import { Menu, X, ChevronDown, User, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/auth/AuthContext';
+import { LoginForm } from '@/auth/LoginForm';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [loginDialogOpen, setLoginDialogOpen] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, isAuthenticated, logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    setShowLogoutConfirm(false);
+    setIsMenuOpen(false);
+  };
 
   const navigation = [
     { name: 'Home', href: '/' },
@@ -17,6 +37,17 @@ const Header: React.FC = () => {
     { name: 'Case Studies', href: '/case-studies' },
     { name: 'Testimonials', href: '/testimonials' },
   ];
+
+  // Navigation for authenticated users
+  const authenticatedNavigation = [
+    { name: 'Dashboard', href: '/dashboard' },
+    { name: 'Inventory', href: '/inventory' },
+    { name: 'Orders', href: '/orders' },
+    { name: 'Reports', href: '/reports' },
+  ];
+
+  // Select the appropriate navigation based on authentication status
+  const currentNavigation = isAuthenticated ? authenticatedNavigation : navigation;
 
   return (
     <header className="sticky top-0 z-40 w-full bg-white/95 backdrop-blur-sm border-b border-border">
@@ -35,7 +66,7 @@ const Header: React.FC = () => {
           
           {/* Desktop navigation */}
           <nav className="hidden md:flex items-center space-x-1">
-            {navigation.map((item) => (
+            {currentNavigation.map((item) => (
               <Link
                 key={item.name}
                 to={item.href}
@@ -52,8 +83,33 @@ const Header: React.FC = () => {
           </nav>
 
           <div className="hidden md:flex items-center space-x-4">
-            <Button variant="outline" size="sm">Login</Button>
-            <Button size="sm">Request Demo</Button>
+            {isAuthenticated ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="flex items-center gap-2">
+                    <User className="h-4 w-4" />
+                    {user?.name}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>
+                    <User className="mr-2 h-4 w-4" />
+                    <span>Profile</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setShowLogoutConfirm(true)}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Logout</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <>
+                <Button variant="outline" size="sm" onClick={() => setLoginDialogOpen(true)}>Login</Button>
+                <Button size="sm">Request Demo</Button>
+              </>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -77,7 +133,7 @@ const Header: React.FC = () => {
       {/* Mobile menu */}
       <div className={cn("md:hidden", isMenuOpen ? "block" : "hidden")}>
         <div className="space-y-1 px-4 pb-3 pt-2">
-          {navigation.map((item) => (
+          {currentNavigation.map((item) => (
             <Link
               key={item.name}
               to={item.href}
@@ -93,11 +149,52 @@ const Header: React.FC = () => {
             </Link>
           ))}
           <div className="pt-4 flex flex-col space-y-2">
-            <Button variant="outline" className="justify-center">Login</Button>
-            <Button className="justify-center">Request Demo</Button>
+            {isAuthenticated ? (
+              <Button 
+                variant="outline" 
+                className="justify-center flex items-center gap-2"
+                onClick={() => setShowLogoutConfirm(true)}
+              >
+                <LogOut className="h-4 w-4" />
+                Logout
+              </Button>
+            ) : (
+              <>
+                <Button 
+                  variant="outline" 
+                  className="justify-center"
+                  onClick={() => {
+                    setLoginDialogOpen(true);
+                    setIsMenuOpen(false);
+                  }}
+                >
+                  Login
+                </Button>
+                <Button className="justify-center">Request Demo</Button>
+              </>
+            )}
           </div>
         </div>
       </div>
+
+      {/* Login Dialog */}
+      <LoginForm open={loginDialogOpen} onOpenChange={setLoginDialogOpen} />
+
+      {/* Logout Confirmation Dialog */}
+      <Dialog open={showLogoutConfirm} onOpenChange={setShowLogoutConfirm}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Logout</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to logout? You will need to log in again to access your account.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowLogoutConfirm(false)}>Cancel</Button>
+            <Button variant="destructive" onClick={handleLogout}>Logout</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </header>
   );
 };

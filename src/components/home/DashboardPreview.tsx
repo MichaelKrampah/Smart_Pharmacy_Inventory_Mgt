@@ -1,4 +1,3 @@
-
 import { DashboardStat } from "@/components/ui/dashboard-stat";
 import { 
   ShoppingCart, Package, AlertTriangle, TrendingUp, 
@@ -63,27 +62,31 @@ export function DashboardPreview() {
             <DashboardStat
               title="Orders Today"
               value="24"
-              icon={ShoppingCart}
+              description="Number of orders processed today"
+              icon={<ShoppingCart />}
               change={{ value: "8%", positive: true }}
               tooltipText="Number of medication orders processed today"
             />
             <DashboardStat
               title="Current Stock"
               value="1,243"
-              icon={Package}
+              description="Total items currently in stock"
+              icon={<Package />}
               colorClass="bg-pharma-green-light text-pharma-green"
             />
             <DashboardStat
               title="Expiring Soon"
               value="18"
-              icon={AlertTriangle}
+              description="Medications expiring within 30 days"
+              icon={<AlertTriangle />}
               tooltipText="Medications expiring within 30 days"
               colorClass="bg-amber-100 text-amber-600"
             />
             <DashboardStat
               title="Out of Stock"
               value="3"
-              icon={Pill}
+              description="Medications currently out of stock"
+              icon={<Pill />}
               tooltipText="Medications currently out of stock"
               colorClass="bg-red-100 text-red-600"
             />
@@ -244,7 +247,7 @@ export function DashboardPreview() {
                   <div>
                     <div className="flex items-center justify-between">
                       <p className="text-sm">Inventory Value</p>
-                      <p className="text-sm font-medium">$247,500</p>
+                      <p className="text-sm font-medium">₵247,500</p>
                     </div>
                     <div className="mt-1 w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
                       <div className="bg-pharma-blue h-full rounded-full" style={{ width: '75%' }}></div>
@@ -253,7 +256,7 @@ export function DashboardPreview() {
                   <div>
                     <div className="flex items-center justify-between">
                       <p className="text-sm">Monthly Orders</p>
-                      <p className="text-sm font-medium">$42,800</p>
+                      <p className="text-sm font-medium">₵42,800</p>
                     </div>
                     <div className="mt-1 w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
                       <div className="bg-pharma-green h-full rounded-full" style={{ width: '60%' }}></div>
@@ -262,7 +265,7 @@ export function DashboardPreview() {
                   <div>
                     <div className="flex items-center justify-between">
                       <p className="text-sm">Expiry Waste</p>
-                      <p className="text-sm font-medium">$1,250</p>
+                      <p className="text-sm font-medium">₵1,250</p>
                     </div>
                     <div className="mt-1 w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
                       <div className="bg-red-500 h-full rounded-full" style={{ width: '5%' }}></div>

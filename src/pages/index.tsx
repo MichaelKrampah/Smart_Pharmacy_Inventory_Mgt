@@ -1,4 +1,3 @@
-
 import SiteLayout from '@/components/layout/SiteLayout';
 import { HeroSection } from '@/components/home/HeroSection';
 import { ValueProposition } from '@/components/home/ValueProposition';
@@ -7,8 +6,22 @@ import { TestimonialCarousel } from '@/components/home/TestimonialCarousel';
 import { ContactForm } from '@/components/home/ContactForm';
 import { CTASection } from '@/components/ui/cta-section';
 import { Helmet } from 'react-helmet-async';
+import { useEffect } from 'react';
+import { useAuth } from '@/auth/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const HomePage = () => {
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
+
+  if (isAuthenticated) return null;
+
   return (
     <SiteLayout>
       <Helmet>
